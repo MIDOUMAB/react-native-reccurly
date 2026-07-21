@@ -62,7 +62,7 @@
     @apply size-6;
   }
 
-  .home-header {
+  /* .home-header {
     @apply mb-2.5 flex-row items-center justify-between;
   }
 
@@ -416,5 +416,5 @@
 
   .category-chip-text-active {
     @apply text-accent;
-  }
+  } */
 }
