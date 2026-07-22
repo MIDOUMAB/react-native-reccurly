@@ -62,7 +62,7 @@
     @apply size-6;
   }
 
-  /* .home-header {
+  .home-header {
     @apply mb-2.5 flex-row items-center justify-between;
   }
 
@@ -79,7 +79,7 @@
   }
 
   .home-add-icon {
-    @apply size-12;
+    @apply size-10;
   }
 
   .home-balance-card {
@@ -119,15 +119,15 @@
   }
 
   .upcoming-card {
-    @apply mr-4 w-44 rounded-2xl border border-black/10 bg-background p-4;
+    @apply mr-4 w-45 rounded-2xl border border-black/10 bg-background p-5;
   }
 
   .upcoming-row {
-    @apply flex-row items-center gap-3;
+    @apply flex-row items-center gap-4;
   }
 
   .upcoming-icon {
-    @apply size-14;
+    @apply size-11;
   }
 
   .upcoming-price {
@@ -139,7 +139,7 @@
   }
 
   .upcoming-name {
-    @apply mt-2 text-lg font-sans-bold text-primary;
+    @apply mt-5 text-lg font-sans-bold text-primary;
   }
 
   .sub-card {
@@ -416,5 +416,5 @@
 
   .category-chip-text-active {
     @apply text-accent;
-  } */
+  }
 }
