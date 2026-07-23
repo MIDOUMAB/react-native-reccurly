@@ -34,6 +34,19 @@
             "imageWidth": 76
           }
         }
+      ],
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/PLusJakartaSans-Regular.ttf",
+            "./assets/fonts/PLusJakartaSans-Bold.ttf",
+            "./assets/fonts/PLusJakartaSans-Medium.ttf",
+            "./assets/fonts/PLusJakartaSans-SemiBold.ttf",
+            "./assets/fonts/PLusJakartaSans-ExtraBold.ttf",
+            "./assets/fonts/PLusJakartaSans-Light.ttf"
+          ]
+        }
       ]
     ],
     "experiments": {
