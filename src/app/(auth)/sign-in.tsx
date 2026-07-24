@@ -3,12 +3,14 @@ import { Link, useRouter } from "expo-router";
 import { styled } from "nativewind";
 import React, { useMemo, useState } from "react";
 import { Pressable, SafeAreaView as RNSafeAreaView, Text, TextInput, View } from "react-native";
+import { usePostHog } from "posthog-react-native";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
 const SignIn = () => {
   const router = useRouter();
   const { signIn, errors, fetchStatus } = useSignIn();
+  const posthog = usePostHog();
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [code, setCode] = useState("");
@@ -26,10 +28,17 @@ const SignIn = () => {
 
     if (error) {
       setFormError(error.longMessage || error.message || "Unable to sign in. Please try again.");
+      posthog.capture("sign_in_error", {
+        error_message: error.message,
+      });
       return;
     }
 
     if (signIn.status === "complete") {
+      posthog.identify(signIn.createdSessionId ?? "unknown", {
+        $set: { email: emailAddress },
+      });
+      posthog.capture("user_signed_in", { method: "password" });
       await signIn.finalize({ navigate: () => router.push("/") });
       return;
     }
@@ -41,6 +50,7 @@ const SignIn = () => {
 
       if (emailCodeFactor) {
         await signIn.mfa.sendEmailCode();
+        posthog.capture("mfa_code_requested", { method: "email_code" });
         setStatusMessage("A verification code was sent to your email.");
         return;
       }
@@ -64,6 +74,11 @@ const SignIn = () => {
     }
 
     if (signIn.status === "complete") {
+      posthog.identify(signIn.createdSessionId ?? "unknown", {
+        $set: { email: emailAddress },
+      });
+      posthog.capture("mfa_verified", { method: "email_code" });
+      posthog.capture("user_signed_in", { method: "password_with_mfa" });
       await signIn.finalize({ navigate: () => router.push("/") });
       return;
     }

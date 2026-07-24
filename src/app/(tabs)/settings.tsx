@@ -4,12 +4,14 @@ import { Pressable, Text, View } from "react-native";
 import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "@clerk/expo";
 import { useRouter } from "expo-router";
+import { usePostHog } from "posthog-react-native";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
 const Settings = () => {
   const router = useRouter();
   const { isLoaded, signOut } = useAuth();
+  const posthog = usePostHog();
   const [isSigningOut, setIsSigningOut] = useState(false);
 
   const handleLogout = async () => {
@@ -17,6 +19,8 @@ const Settings = () => {
     setIsSigningOut(true);
 
     try {
+      posthog.capture("user_signed_out");
+      posthog.reset();
       await signOut();
       router.replace("/(auth)/sign-in");
     } catch (error) {

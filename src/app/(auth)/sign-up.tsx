@@ -3,12 +3,14 @@ import { Link, useRouter } from "expo-router";
 import { styled } from "nativewind";
 import React, { useMemo, useState } from "react";
 import { Pressable, SafeAreaView as RNSafeAreaView, Text, TextInput, View } from "react-native";
+import { usePostHog } from "posthog-react-native";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
 const SignUp = () => {
   const router = useRouter();
   const { signUp, errors, fetchStatus } = useSignUp();
+  const posthog = usePostHog();
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -33,10 +35,18 @@ const SignUp = () => {
 
     if (error) {
       setFormError(error.longMessage || error.message || "Unable to create account.");
+      posthog.capture("sign_up_error", {
+        error_message: error.message,
+      });
       return;
     }
 
     if (signUp.status === "complete") {
+      posthog.identify(signUp.createdUserId ?? "unknown", {
+        $set: { email: emailAddress },
+        $set_once: { sign_up_date: new Date().toISOString() },
+      });
+      posthog.capture("user_signed_up", { method: "password" });
       await signUp.finalize({ navigate: () => router.push("/") });
       return;
     }
@@ -47,6 +57,7 @@ const SignUp = () => {
       signUp.missingFields.length === 0
     ) {
       await signUp.verifications.sendEmailCode();
+      posthog.capture("email_verification_sent");
       setStatusMessage("A verification code has been sent to your email.");
       return;
     }
@@ -64,6 +75,12 @@ const SignUp = () => {
     }
 
     if (signUp.status === "complete") {
+      posthog.identify(signUp.createdUserId ?? "unknown", {
+        $set: { email: emailAddress },
+        $set_once: { sign_up_date: new Date().toISOString() },
+      });
+      posthog.capture("email_verification_completed");
+      posthog.capture("user_signed_up", { method: "password_with_email_verification" });
       await signUp.finalize({ navigate: () => router.push("/") });
       return;
     }
