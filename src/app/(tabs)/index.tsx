@@ -1,5 +1,5 @@
-import images from "@/../constants/images";
-import "@/../global.css";
+import images from "@/constants/images";
+import "@/global.css";
 import dayjs from "dayjs";
 import { styled } from "nativewind";
 import { FlatList, Image, Text, View } from "react-native";
@@ -57,11 +57,11 @@ export default function App() {
                   horizontal
                   showsHorizontalScrollIndicator={false}
                   ListEmptyComponent={
-                    <Text className="home-empty-state">No upcoming renawals yet.</Text>
+                    <Text className="home-empty-state">No upcoming renewals yet.</Text>
                   }
                 />
               </View>
-              <ListHeading title="All Subscription" />
+              <ListHeading title="All Subscriptions" />
 
             </>
           )}
@@ -78,7 +78,9 @@ export default function App() {
           ListEmptyComponent={
             <Text className="home-empty-state">No subscriptions yet.</Text>
           }
+          contentContainerClassName="pb-20"
         />
     </SafeAreaView>
   );
 }
+ 
