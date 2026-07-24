@@ -1,5 +1,5 @@
-import images from "@/../constants/images";
-import "@/../global.css";
+import images from "@/constants/images";
+import "@/global.css";
 import dayjs from "dayjs";
 import { styled } from "nativewind";
 import { FlatList, Image, Text, View } from "react-native";
@@ -16,9 +16,11 @@ import { icons } from "../../../constants/icons";
 import { formatCurrency } from "../../../lib/utils";
 import SubscriptionCard from "../../../components/SubscriptionCard";
 import { useState } from "react";
+import { usePostHog } from "posthog-react-native";
 
 const SafeAreaView = styled(RNSafeAreaView);
 export default function App() {
+  const posthog = usePostHog();
   const [expandedSubscriptionId,setExpandedSubscriptionId] = useState<string | null>(null);
   return (
     <SafeAreaView className="flex-1 bg-background p-5">
@@ -57,20 +59,31 @@ export default function App() {
                   horizontal
                   showsHorizontalScrollIndicator={false}
                   ListEmptyComponent={
-                    <Text className="home-empty-state">No upcoming renawals yet.</Text>
+                    <Text className="home-empty-state">No upcoming renewals yet.</Text>
                   }
                 />
               </View>
-              <ListHeading title="All Subscription" />
+              <ListHeading title="All Subscriptions" />
 
             </>
           )}
           data={HOME_SUBSCRIPTIONS}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => ( 
-          <SubscriptionCard {...item} 
+          renderItem={({ item }) => (
+          <SubscriptionCard {...item}
             expanded={expandedSubscriptionId === item.id}
-            onPress={() => setExpandedSubscriptionId((currentId) =>(currentId === item.id ? null : item.id))}
+            onPress={() => {
+              const isExpanding = expandedSubscriptionId !== item.id;
+              setExpandedSubscriptionId((currentId) => (currentId === item.id ? null : item.id));
+              if (isExpanding) {
+                posthog.capture("subscription_card_expanded", {
+                  subscription_id: item.id,
+                  subscription_name: item.name,
+                  category: item.category,
+                  billing: item.billing,
+                });
+              }
+            }}
           /> )}
           extraData={expandedSubscriptionId}
           ItemSeparatorComponent={() => <View className="h-4" />}
@@ -78,7 +91,9 @@ export default function App() {
           ListEmptyComponent={
             <Text className="home-empty-state">No subscriptions yet.</Text>
           }
+          contentContainerClassName="pb-20"
         />
     </SafeAreaView>
   );
 }
+ 
