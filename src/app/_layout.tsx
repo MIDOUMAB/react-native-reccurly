@@ -6,6 +6,7 @@ import { ClerkProvider } from "@clerk/expo";
 import { tokenCache } from "@clerk/expo/token-cache";
 import { PostHogProvider } from "posthog-react-native";
 import { posthog } from "@/src/config/posthog";
+import { SubscriptionsProvider } from "../context/subscriptions-context";
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY as string;
 
@@ -56,7 +57,9 @@ export default function RootLayout() {
           maxElementsCaptured: 20,
         }}
       >
-        <Stack screenOptions={{ headerShown: false }} />
+        <SubscriptionsProvider>
+          <Stack screenOptions={{ headerShown: false }} />
+        </SubscriptionsProvider>
       </PostHogProvider>
     </ClerkProvider>
   );
