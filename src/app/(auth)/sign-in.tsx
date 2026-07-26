@@ -43,7 +43,10 @@ const SignIn = () => {
       return;
     }
 
-    if (signIn.status === "needs_client_trust") {
+    if (
+      signIn.status === "needs_client_trust" ||
+      signIn.status === "needs_second_factor"
+    ) {
       const emailCodeFactor = signIn.supportedSecondFactors?.find(
         (factor: { strategy?: string }) => factor.strategy === "email_code",
       );
@@ -54,11 +57,6 @@ const SignIn = () => {
         setStatusMessage("A verification code was sent to your email.");
         return;
       }
-    }
-
-    if (signIn.status === "needs_second_factor") {
-      setStatusMessage("A second factor is required. Complete the verification to continue.");
-      return;
     }
 
     setFormError("Unable to complete sign in. Please try again.");
@@ -86,7 +84,8 @@ const SignIn = () => {
     setFormError("Verification did not complete. Please try again.");
   };
 
-  const needsVerify = signIn.status === "needs_client_trust";
+  const needsVerify =
+    signIn.status === "needs_client_trust" || signIn.status === "needs_second_factor";
 
   return (
     <SafeAreaView className="flex-1 bg-background">

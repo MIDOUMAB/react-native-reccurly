@@ -56,7 +56,13 @@ const SignUp = () => {
       signUp.unverifiedFields?.includes("email_address") &&
       signUp.missingFields.length === 0
     ) {
-      await signUp.verifications.sendEmailCode();
+      const { error } = await signUp.verifications.sendEmailCode();
+
+      if (error) {
+        setFormError(error.longMessage || error.message || "Unable to send the verification email.");
+        return;
+      }
+
       posthog.capture("email_verification_sent");
       setStatusMessage("A verification code has been sent to your email.");
       return;
@@ -101,6 +107,8 @@ const SignUp = () => {
           <Text className="mt-2 text-base font-sans-medium text-muted-foreground">
             Start managing your subscriptions with a secure account.
           </Text>
+
+          <View nativeID="clerk-captcha" className="mt-4" />
 
           {needsVerify ? (
             <>

@@ -16,7 +16,7 @@ import { icons } from "../../../constants/icons";
 import { formatCurrency } from "../../../lib/utils";
 import { useState } from "react";
 import { usePostHog } from "posthog-react-native";
-import CreateSubscriptionModal from "../../components/CreateSubscriptionModal";
+import CreateSubscriptionModal from "../../../components/CreateSubscriptionModal";
 import { useSubscriptions } from "../../context/subscriptions-context";
 
 const SafeAreaView = styled(RNSafeAreaView);
@@ -96,7 +96,6 @@ export default function App() {
               if (isExpanding) {
                 posthog.capture("subscription_card_expanded", {
                   subscription_id: item.id,
-                  subscription_name: item.name,
                   category: item.category,
                   billing: item.billing,
                 });

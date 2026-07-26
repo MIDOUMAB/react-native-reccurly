@@ -71,6 +71,11 @@ const CreateSubscriptionModal = ({
     setCategory("Other");
   };
 
+  const handleClose = () => {
+    resetForm();
+    onClose();
+  };
+
   const handleSubmit = () => {
     const trimmedName = name.trim();
     const parsedPrice = Number(price);
@@ -81,7 +86,7 @@ const CreateSubscriptionModal = ({
 
     const startDate = dayjs().toISOString();
     const renewalDate = dayjs(startDate)
-      .add(frequency === "Yearly" ? 1 : 1, frequency === "Yearly" ? "year" : "month")
+      .add(1, frequency === "Yearly" ? "year" : "month")
       .toISOString();
 
     const newSubscription: Subscription = {
@@ -110,9 +115,9 @@ const CreateSubscriptionModal = ({
     Number(price) > 0;
 
   return (
-    <Modal transparent visible={visible} animationType="slide" onRequestClose={onClose}>
+    <Modal transparent visible={visible} animationType="slide" onRequestClose={handleClose}>
       <View className="modal-overlay">
-        <Pressable className="flex-1" onPress={onClose} />
+        <Pressable className="flex-1" onPress={handleClose} />
 
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -121,7 +126,7 @@ const CreateSubscriptionModal = ({
           <View className="modal-container">
             <View className="modal-header">
               <Text className="modal-title">New Subscription</Text>
-              <Pressable className="modal-close" onPress={onClose}>
+              <Pressable className="modal-close" onPress={handleClose}>
                 <Text className="modal-close-text">×</Text>
               </Pressable>
             </View>

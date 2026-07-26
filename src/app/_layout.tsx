@@ -1,8 +1,9 @@
 import "@/global.css";
 import { useFonts } from "expo-font";
-import { SplashScreen, Stack, usePathname, useGlobalSearchParams } from "expo-router";
+import { SplashScreen, Stack, usePathname } from "expo-router";
 import { useEffect, useRef } from "react";
-import { ClerkProvider } from "@clerk/expo";
+import { ClerkProvider, useAuth } from "@clerk/expo";
+import { ActivityIndicator, View } from "react-native";
 import { tokenCache } from "@clerk/expo/token-cache";
 import { PostHogProvider } from "posthog-react-native";
 import { posthog } from "@/src/config/posthog";
@@ -15,7 +16,8 @@ if (!publishableKey) {
 }
 
 SplashScreen.preventAutoHideAsync();
-export default function RootLayout() {
+
+function AppContent() {
   const [fontsLoaded] = useFonts({
     "sans-regular": require("../../assets/fonts/PlusJakartaSans-Regular.ttf"),
     "sans-bold": require("../../assets/fonts/PlusJakartaSans-Bold.ttf"),
@@ -24,28 +26,37 @@ export default function RootLayout() {
     "sans-extrabold": require("../../assets/fonts/PlusJakartaSans-ExtraBold.ttf"),
     "sans-light": require("../../assets/fonts/PlusJakartaSans-Light.ttf"),
   });
+  const { isLoaded: isClerkLoaded } = useAuth();
   const pathname = usePathname();
-  const params = useGlobalSearchParams();
   const previousPathname = useRef<string | undefined>(undefined);
 
   useEffect(() => {
-    if (fontsLoaded) {
+    if (fontsLoaded && isClerkLoaded) {
       SplashScreen.hideAsync();
     }
-  }, [fontsLoaded]);
+  }, [fontsLoaded, isClerkLoaded]);
 
   useEffect(() => {
     if (previousPathname.current !== pathname) {
       posthog.screen(pathname, {
         previous_screen: previousPathname.current ?? null,
-        ...params,
       });
       previousPathname.current = pathname;
     }
-  }, [pathname, params]);
+  }, [pathname]);
 
-  if (!fontsLoaded) return null;
+  if (!fontsLoaded || !isClerkLoaded) {
+    return (
+      <View className="flex-1 items-center justify-center bg-background">
+        <ActivityIndicator size="large" color="#ea7a53" />
+      </View>
+    );
+  }
 
+  return <Stack screenOptions={{ headerShown: false }} />;
+}
+
+export default function RootLayout() {
   return (
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
       <PostHogProvider
@@ -58,7 +69,7 @@ export default function RootLayout() {
         }}
       >
         <SubscriptionsProvider>
-          <Stack screenOptions={{ headerShown: false }} />
+          <AppContent />
         </SubscriptionsProvider>
       </PostHogProvider>
     </ClerkProvider>
