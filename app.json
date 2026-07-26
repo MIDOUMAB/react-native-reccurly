@@ -39,15 +39,16 @@
         "expo-font",
         {
           "fonts": [
-            "./assets/fonts/PLusJakartaSans-Regular.ttf",
-            "./assets/fonts/PLusJakartaSans-Bold.ttf",
-            "./assets/fonts/PLusJakartaSans-Medium.ttf",
-            "./assets/fonts/PLusJakartaSans-SemiBold.ttf",
-            "./assets/fonts/PLusJakartaSans-ExtraBold.ttf",
-            "./assets/fonts/PLusJakartaSans-Light.ttf"
+            "./assets/fonts/PlusJakartaSans-Regular.ttf",
+            "./assets/fonts/PlusJakartaSans-Bold.ttf",
+            "./assets/fonts/PlusJakartaSans-Medium.ttf",
+            "./assets/fonts/PlusJakartaSans-SemiBold.ttf",
+            "./assets/fonts/PlusJakartaSans-ExtraBold.ttf",
+            "./assets/fonts/PlusJakartaSans-Light.ttf"
           ]
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true,

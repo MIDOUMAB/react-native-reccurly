@@ -3,5 +3,6 @@
     "source.fixAll": "never",
     "source.organizeImports": "never",
     "source.sortMembers": "never"
-  }
+  },
+  "claudeCodeChat.permissions.yoloMode": false
 }
